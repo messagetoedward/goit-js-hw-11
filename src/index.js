@@ -16,10 +16,10 @@ loadMoreBtn.classList.add('is-hidden');
 
 const handleSubmit = event => {
     event.preventDefault();
-    gallery.innerHTML = '';
+  gallery.innerHTML = '';
+  page = 1;
     searchQuery = event.currentTarget.searchQuery.value;
     console.log(searchQuery);
-
         fetchPhoto(searchQuery, page).then(photos => {
         drawPhotos(photos);
         page += 1;
