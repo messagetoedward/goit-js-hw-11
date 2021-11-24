@@ -19,12 +19,20 @@ const handleSubmit = event => {
   gallery.innerHTML = '';
   page = 1;
     searchQuery = event.currentTarget.searchQuery.value;
-    console.log(searchQuery);
-        fetchPhoto(searchQuery, page).then(photos => {
-        drawPhotos(photos);
-        page += 1;
-        loadMoreBtn.classList.remove('is-hidden');
+  console.log(searchQuery);
+  if (searchQuery === '') {
+    fetchPhoto(searchQuery, page).then(photos => {
+      drawPhotos(photos);
+
     });
+    loadMoreBtn.classList.add('is-hidden');
+  } else {
+     fetchPhoto(searchQuery, page).then(photos => {
+       drawPhotos(photos);
+    page += 1;
+    loadMoreBtn.classList.remove('is-hidden');
+    });
+  }
 }
 
 search.addEventListener('submit', handleSubmit);
