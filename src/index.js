@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Notiflix from 'notiflix';
 
 // https://pixabay.com/api/?key=24319786-e6f55023f5bc4aeea2cc437aa&q=yellow+flowers&image_type=photo
 
@@ -11,9 +12,10 @@ const gallery = document.querySelector('.gallery');
 let searchQuery;
 const handleSubmit = event => {
     event.preventDefault();
-    // const request = event.currentTarget;
     searchQuery = event.currentTarget.searchQuery.value;
-    fetchPhoto(searchQuery).then(drawPhotos).catch(error => console.log(error));
+    console.log(searchQuery);
+
+    fetchPhoto(searchQuery).then(drawPhotos);
 };
 
 search.addEventListener('submit', handleSubmit);
@@ -22,8 +24,14 @@ search.addEventListener('submit', handleSubmit);
 
 async function fetchPhoto(searchQuery) {
     // const {} = await axios.get(``);
+    try {
     const {data} = await axios.get(`?key=24319786-e6f55023f5bc4aeea2cc437aa&q=${searchQuery}&image_type=photo&orientation=horizontal&safesearch=true`);
-    return data.hits;
+        if (data.hits.length === 0 || searchQuery === '') {
+            return Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.', {timeout: 1000});
+        } else { return data.hits }
+    } catch (error) {
+        error => console.log(error);
+    }
         // .then(response => {
         //     if (!response.ok) {
         //         throw new Error(response.status);
@@ -33,7 +41,9 @@ async function fetchPhoto(searchQuery) {
 };
 
 function drawPhotos(photos) {
-    
+    if (photos === undefined) {
+        return
+    }
    const markup = photos.map(({webformatURL, largeImageURL, tags, likes, views, comments, downloads}) => {
      return `<div class="photo-card">
   <img src="${webformatURL}" alt="${tags}" style="height: 7em" loading="lazy" />
@@ -54,6 +64,10 @@ function drawPhotos(photos) {
 </div>`;
     }).join('');
     gallery.innerHTML = markup;
+}
+
+function error(error) {
+    console.log(error);
 }
 
 const parameters = {
