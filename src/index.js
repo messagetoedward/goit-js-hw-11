@@ -18,21 +18,13 @@ const handleSubmit = event => {
     event.preventDefault();
   gallery.innerHTML = '';
   page = 1;
-    searchQuery = event.currentTarget.searchQuery.value;
+  searchQuery = event.currentTarget.searchQuery.value;
   console.log(searchQuery);
-  if (searchQuery === '') {
-    fetchPhoto(searchQuery, page).then(photos => {
-      drawPhotos(photos);
-
-    });
-    loadMoreBtn.classList.add('is-hidden');
-  } else {
-     fetchPhoto(searchQuery, page).then(photos => {
-       drawPhotos(photos);
+  fetchPhoto(searchQuery, page).then(photos => {
+    drawPhotos(photos);
     page += 1;
     loadMoreBtn.classList.remove('is-hidden');
-    });
-  }
+  }).catch(error);
 }
 
 search.addEventListener('submit', handleSubmit);
@@ -46,9 +38,9 @@ loadMoreBtn.addEventListener('click', (event) => {
 
 
 function drawPhotos(photos) {
-    if (photos === undefined) {
-        return
-    }
+    // if (photos === undefined) {
+    //     return
+    // }
    const markup = photos.map(({webformatURL, largeImageURL, tags, likes, views, comments, downloads}) => 
     `<div class="photo-card">
   <img src="${webformatURL}" alt="${tags}" style="height: 7em" loading="lazy" />
@@ -71,7 +63,7 @@ function drawPhotos(photos) {
 }
 
 function error(error) {
-    console.log(error);
+  loadMoreBtn.classList.add('is-hidden');
 }
 
 const parameters = {
