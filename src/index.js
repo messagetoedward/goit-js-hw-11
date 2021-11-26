@@ -3,6 +3,7 @@ import Notiflix from 'notiflix';
 import SimpleLightbox from "simplelightbox";
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import './css/styles.css';
+import '../node_modules/w3-css/'
 import { fetchPhoto } from './services/fetchPhoto';
 
 
@@ -23,17 +24,13 @@ const handleSubmit = event => {
   gallery.innerHTML = '';
   page = 1;
   searchQuery = event.currentTarget.searchQuery.value;
-  console.log(searchQuery);
   fetchPhoto(searchQuery, page, perPage).then(photos => {
     if (photos.totalHits < perPage) {
+      Notiflix.Notify.success(`We found ${photos.totalHits} results`, {timeout: 1000});
+      warning();
       drawPhotos(photos);
-      loadMoreBtn.classList.add('is-hidden');
-      Notiflix.Notify.warning("Were sorry, but you've reached the end of search results.", {timeout: 1000})
     } else {
-      drawPhotos(photos);
-      console.log();
-      page += 1;
-      loadMoreBtn.classList.remove('is-hidden');
+      proceed(photos);
     }
   }).catch(error);
 }
@@ -44,22 +41,26 @@ loadMoreBtn.addEventListener('click', (event) => {
   event.preventDefault();
   fetchPhoto(searchQuery, page, perPage).then(photos => {
     let totalPages = photos.totalHits / perPage;
-    console.log(totalPages);
     if (page >= totalPages) {
-    loadMoreBtn.classList.add('is-hidden');
-    Notiflix.Notify.warning("Were sorry, but you've reached the end of search results.", {timeout: 1000});
+      warning();
   } drawPhotos(photos)
   });
   page += 1;
-  console.log(page);
-  
 })
 
+function proceed(photos) {
+  drawPhotos(photos);
+  page += 1;
+  loadMoreBtn.classList.remove('is-hidden');
+  Notiflix.Notify.success(`We found ${photos.totalHits} results`, { timeout: 1000 });
+}
+
+function warning () {
+  loadMoreBtn.classList.add('is-hidden');
+  Notiflix.Notify.warning("Were sorry, but you've reached the end of search results.", { timeout: 1000 });
+}
 
 function drawPhotos(photos) {
-    // if (photos === undefined) {
-    //     return
-    // }
    const markup = photos.hits.map(({webformatURL, largeImageURL, tags, likes, views, comments, downloads}) => 
     `<div class="photo-card">
     <a href="${largeImageURL}">

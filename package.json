@@ -30,6 +30,7 @@
     "infinite-scroll": "^4.0.1",
     "lightbox": "^0.5.0",
     "notiflix": "^3.2.2",
-    "simplelightbox": "^2.10.1"
+    "simplelightbox": "^2.10.1",
+    "w3-css": "^4.1.0"
   }
 }
