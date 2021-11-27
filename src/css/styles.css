@@ -103,6 +103,10 @@ img {
   text-align: center;
 }
 
+.button-wraper {
+  text-align: center;
+}
+
 .load-more {
   border: none;
   background: transparent;
