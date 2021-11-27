@@ -28,6 +28,7 @@
   "dependencies": {
     "axios": "^0.24.0",
     "infinite-scroll": "^4.0.1",
+    "isotope-layout": "^3.0.6",
     "lightbox": "^0.5.0",
     "notiflix": "^3.2.2",
     "simplelightbox": "^2.10.1",

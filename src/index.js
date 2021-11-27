@@ -23,7 +23,7 @@ const handleSubmit = event => {
   event.preventDefault();
   gallery.innerHTML = '';
   page = 1;
-  searchQuery = event.currentTarget.searchQuery.value;
+  searchQuery = event.currentTarget.searchQuery.value.trim();
   fetchPhoto(searchQuery, page, perPage).then(photos => {
     if (photos.totalHits < perPage) {
       Notiflix.Notify.success(`We found ${photos.totalHits} results`, {timeout: 1000});
@@ -35,18 +35,42 @@ const handleSubmit = event => {
   }).catch(error);
 }
 
-search.addEventListener('submit', handleSubmit);
+// const handleLoadMore = event => {
+//   event.preventDefault();
+//   fetchPhoto(searchQuery, page, perPage).then(photos => {
+//     let totalPages = photos.totalHits / perPage;
+//     if (page >= totalPages) {
+//       warning();
+//   } drawPhotos(photos)
+//   });
+//   page += 1;
+// }
 
-loadMoreBtn.addEventListener('click', (event) => {
-  event.preventDefault();
-  fetchPhoto(searchQuery, page, perPage).then(photos => {
+function onEntry(entries, observer) {
+  entries.forEach(entry => {
+  if (entry.isIntersecting) {
+    fetchPhoto(searchQuery, page, perPage).then(photos => {
     let totalPages = photos.totalHits / perPage;
     if (page >= totalPages) {
       warning();
   } drawPhotos(photos)
   });
   page += 1;
-})
+  }
+});
+  
+}
+
+
+search.addEventListener('submit', handleSubmit);
+// loadMoreBtn.addEventListener('click', handleLoadMore);
+
+const observer = new IntersectionObserver(onEntry, {
+  root: null,
+  rootMargin: '0px',
+  threshold: 0.5,
+});
+  observer.observe(loadMoreBtn);
 
 function proceed(photos) {
   drawPhotos(photos);
@@ -64,31 +88,36 @@ function drawPhotos(photos) {
    const markup = photos.hits.map(({webformatURL, largeImageURL, tags, likes, views, comments, downloads}) => 
     `<div class="photo-card">
     <a href="${largeImageURL}">
-  <img src="${webformatURL}" alt="${tags}" style="height: 7em" loading="lazy" />
+  <img src="${webformatURL}" alt="${tags}" loading="lazy" />
     </a>
   <div class="info">
     <p class="info-item">
-      <b>Likes: ${likes}</b>
+      <b><i class="fa fa-heart-o" aria-hidden="true">&nbsp;</i>${likes}</b>
     </p>
     <p class="info-item">
-      <b>Views: ${views}</b>
+      <b><i class="fa fa-eye" aria-hidden="true">&nbsp;</i>${views}</b>
     </p>
     <p class="info-item">
-      <b>Comments: ${comments}</b>
+      <b><i class="fa fa-comments-o" aria-hidden="true">&nbsp;</i>${comments}</b>
     </p>
     <p class="info-item">
-      <b>Downloads: ${downloads}</b>
+      <b><i class="fa fa-download" aria-hidden="true">&nbsp;</i>${downloads}</b>
     </p>
   </div>
 </div>`).join('');
   gallery.insertAdjacentHTML('beforeend', markup);
-  const lightbox = new SimpleLightbox('.photo-card a');
-  lightbox.on('show.simplelightbox');
+  lghtbx();
 }
 
 
 function error(error) {
   loadMoreBtn.classList.add('is-hidden');
+}
+
+function lghtbx() {
+   const lightbox = new SimpleLightbox('.photo-card a');
+  // lightbox.on('show.simplelightbox');
+  lightbox.refresh()
 }
 
 const parameters = {
