@@ -27,8 +27,8 @@ const handleSubmit = event => {
   fetchPhoto(searchQuery, page, perPage).then(photos => {
     if (photos.totalHits < perPage) {
       Notiflix.Notify.success(`We found ${photos.totalHits} results`, {timeout: 1000});
-      warning();
       drawPhotos(photos);
+      setTimeout(warning, 1500)
     } else {
       proceed(photos);
     }
