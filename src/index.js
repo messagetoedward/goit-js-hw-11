@@ -116,7 +116,7 @@ function error(error) {
 
 function lghtbx() {
    const lightbox = new SimpleLightbox('.photo-card a');
-  // lightbox.on('show.simplelightbox');
+  lightbox.on('show.simplelightbox');
   lightbox.refresh()
 }
 
